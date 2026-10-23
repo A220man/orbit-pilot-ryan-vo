@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "name": "orbit-pilot-ryan-vo",
+  "owner": "A220man",
+  "email": "ryandtvo@gmail.com",
+  "domain": "AI/ML developer tools",
+  "summary": "Work in progress: orbit-pilot-ryan-vo",
+  "workflows": [
+    "Create and configure multi-phase security audit targets",
+    "Execute audit runs with hunting, validation, and reporting phases",
+    "Export machine-readable findings with CWE, CVSS, and coverage ledger"
+  ],
+  "auth": "oidc-keycloak-saml-broker",
+  "llm_providers": [
+    "openai-compatible",
+    "anthropic",
+    "gemini",
+    "ollama"
+  ],
+  "status": "work-in-progress"
+}
