@@ -1,0 +1,110 @@
+{
+  "schema_version": 1,
+  "current_feature": "initial-scaffold",
+  "features": [
+    {
+      "id": "initial-scaffold",
+      "title": "Initial FastAPI/React scaffold with database and basic API",
+      "status": "done",
+      "acceptance": [
+        "FastAPI backend with SQLite database runs",
+        "React + TypeScript + Vite frontend builds",
+        "Backend and frontend can communicate",
+        "Docker compose with Keycloak runs",
+        "Basic tests pass"
+      ],
+      "implementation": [
+        "backend/app/main.py",
+        "backend/app/core/config.py",
+        "backend/app/core/database.py",
+        "backend/app/api/v1/audits.py",
+        "backend/app/models/__init__.py",
+        "backend/app/schemas/__init__.py",
+        "backend/requirements.txt",
+        "backend/tests/test_health.py",
+        "backend/tests/conftest.py",
+        "frontend/package.json",
+        "frontend/src/main.tsx",
+        "frontend/src/App.tsx",
+        "frontend/src/AppContext.tsx",
+        "frontend/src/api/client.ts",
+        "frontend/src/types/index.ts",
+        "frontend/src/pages/AuditList.tsx",
+        "frontend/src/pages/AuditDetail.tsx",
+        "frontend/src/index.css",
+        "frontend/vite.config.ts",
+        "frontend/tsconfig.json",
+        "frontend/src/__tests__/setup.ts",
+        "frontend/src/__tests__/App.test.tsx",
+        "docker-compose.yaml",
+        "Dockerfile.backend",
+        "Dockerfile.frontend",
+        "frontend/nginx.conf"
+      ],
+      "tests": [
+        "backend/tests/test_health.py",
+        "backend/tests/conftest.py",
+        "frontend/src/__tests__/App.test.tsx",
+        "frontend/src/__tests__/setup.ts"
+      ]
+    },
+    {
+      "id": "audit-domain-engine",
+      "status": "in_progress",
+      "acceptance": [
+        "Finding model with CWE, CVSS, references",
+        "Coverage ledger with attempt tracking",
+        "Validator CLI for findings and coverage",
+        "Multi-phase audit workflow (recon, hunting, validation, reporting)"
+      ],
+      "implementation": [
+        "backend/app/models/__init__.py",
+        "backend/app/schemas/__init__.py",
+        "backend/app/api/v1/audits.py",
+        "backend/app/cli/validate.py",
+        "backend/app/cli/__init__.py"
+      ],
+      "tests": [
+        "backend/tests/test_health.py",
+        "backend/tests/test_cli_validate.py",
+        "backend/tests/conftest.py"
+      ],
+    },
+    {
+      "id": "oidc-auth",
+      "title": "OIDC authentication with Keycloak",
+      "status": "planned",
+      "acceptance": [
+        "Login/logout flow works",
+        "Protected API endpoints",
+        "Role-based access control"
+      ],
+      "implementation": [],
+      "tests": []
+    },
+    {
+      "id": "llm-adapters",
+      "title": "LLM provider adapters (OpenAI-compatible, Anthropic, Gemini, Ollama)",
+      "status": "planned",
+      "acceptance": [
+        "Unified LLM interface",
+        "Configurable provider/model/endpoint",
+        "Bounded timeouts, redacted errors"
+      ],
+      "implementation": [],
+      "tests": []
+    },
+    {
+      "id": "ui-workflows",
+      "title": "Three complete UI workflows: create audit, view findings, export report",
+      "status": "planned",
+      "acceptance": [
+        "Create/import audit target",
+        "Search/filter findings",
+        "Export machine-readable report"
+      ],
+      "implementation": [],
+      "tests": []
+    }
+  ]
+}
