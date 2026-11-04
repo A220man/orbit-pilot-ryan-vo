@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, func
 from typing import List, Optional
-from datetime import datetime
+from datetime import datetime, timezone
 
 from app.core.database import get_db
 from app.models import AuditRun, Finding, CoverageLedger, AuditLog, AuditStatus, FindingStatus
@@ -84,9 +84,9 @@ async def update_audit_run(audit_id: int, payload: AuditRunUpdate, db: AsyncSess
         setattr(audit, field, value)
     
     if payload.status == AuditStatus.RUNNING and not audit.started_at:
-        audit.started_at = datetime.utcnow()
+        audit.started_at = datetime.now(timezone.utc)
     if payload.status in (AuditStatus.COMPLETED, AuditStatus.FAILED, AuditStatus.CANCELLED) and not audit.completed_at:
-        audit.completed_at = datetime.utcnow()
+        audit.completed_at = datetime.now(timezone.utc)
     
     await db.commit()
     await db.refresh(audit)
@@ -168,7 +168,7 @@ async def update_finding(audit_id: int, finding_id: int, payload: FindingUpdate,
         setattr(finding, field, value)
     
     if payload.status == FindingStatus.CONFIRMED and not finding.verified_at:
-        finding.verified_at = datetime.utcnow()
+        finding.verified_at = datetime.now(timezone.utc)
     
     await db.commit()
     await db.refresh(finding)

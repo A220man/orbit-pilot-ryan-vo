@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 from enum import Enum as PyEnum
 from typing import Optional, List
 from sqlalchemy import (
@@ -6,7 +6,6 @@ from sqlalchemy import (
 )
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy.dialects.sqlite import JSON as SQLiteJSON
-
 from app.core.database import Base
 
 
@@ -45,7 +44,7 @@ class AuditRun(Base):
     profile: Mapped[str] = mapped_column(String(50), default="standard")  # quick, standard, deep
     status: Mapped[AuditStatus] = mapped_column(Enum(AuditStatus), default=AuditStatus.DRAFT, nullable=False)
     config: Mapped[dict] = mapped_column(JSON().with_variant(SQLiteJSON, "sqlite"), default=dict)
-    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.utcnow)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
     started_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
     completed_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
     error: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
@@ -78,8 +77,8 @@ class Finding(Base):
     preserved_uses: Mapped[List[dict]] = mapped_column(JSON().with_variant(SQLiteJSON, "sqlite"), default=list)
     method_backed: Mapped[bool] = mapped_column(default=False)
     source_trace: Mapped[dict] = mapped_column(JSON().with_variant(SQLiteJSON, "sqlite"), default=dict)
-    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.utcnow)
-    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.utcnow, onupdate=datetime.utcnow)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
     verified_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
     verifier_notes: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
 
@@ -100,8 +99,8 @@ class CoverageLedger(Base):
     units: Mapped[List[dict]] = mapped_column(JSON().with_variant(SQLiteJSON, "sqlite"), default=list)
     attempts: Mapped[List[dict]] = mapped_column(JSON().with_variant(SQLiteJSON, "sqlite"), default=list)
     promoted_artifacts: Mapped[dict] = mapped_column(JSON().with_variant(SQLiteJSON, "sqlite"), default=dict)
-    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.utcnow)
-    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.utcnow, onupdate=datetime.utcnow)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
 
     audit_run: Mapped["AuditRun"] = relationship(back_populates="coverage_ledger")
 
@@ -115,7 +114,7 @@ class AuditLog(Base):
     action: Mapped[str] = mapped_column(String(100), nullable=False)
     details: Mapped[dict] = mapped_column(JSON().with_variant(SQLiteJSON, "sqlite"), default=dict)
     actor: Mapped[Optional[str]] = mapped_column(String(128), nullable=True)  # user or agent id
-    timestamp: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.utcnow)
+    timestamp: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
 
     __table_args__ = (
         Index("ix_audit_logs_run_phase", "audit_run_id", "phase"),

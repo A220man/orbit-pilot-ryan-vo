@@ -1,6 +1,6 @@
 from datetime import datetime
 from typing import Optional, List, Dict, Any
-from pydantic import BaseModel, Field, HttpUrl
+from pydantic import BaseModel, Field, HttpUrl, ConfigDict
 from enum import Enum
 
 
@@ -55,9 +55,7 @@ class AuditRunResponse(AuditRunBase):
     started_at: Optional[datetime] = None
     completed_at: Optional[datetime] = None
     error: Optional[str] = None
-
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class FindingBase(BaseModel):
@@ -108,8 +106,7 @@ class FindingResponse(FindingBase):
     verified_at: Optional[datetime] = None
     verifier_notes: Optional[str] = None
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class CoverageLedgerUnit(BaseModel):
@@ -140,8 +137,7 @@ class CoverageLedgerResponse(CoverageLedgerBase):
     created_at: datetime
     updated_at: datetime
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class AuditLogEntry(BaseModel):
@@ -153,8 +149,7 @@ class AuditLogEntry(BaseModel):
     actor: Optional[str] = None
     timestamp: datetime
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class HealthResponse(BaseModel):
