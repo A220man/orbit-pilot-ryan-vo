@@ -29,6 +29,15 @@ def validate_finding(
     response: bool = typer.Option(False, "--response", "-r", help="Validate as FindingResponse (requires id, audit_run_id, timestamps)"),
 ):
     """Validate a finding JSON file against the schema."""
+    # Typer passes boolean flags as strings when not using is_flag=True; normalize
+    if isinstance(strict, str):
+        strict = strict.lower() in ("true", "1", "yes", "on")
+    elif strict is None:
+        strict = True
+    if isinstance(response, str):
+        response = response.lower() in ("true", "1", "yes", "on")
+    elif response is None:
+        response = True
     try:
         with open(file_path, "r") as f:
             data = json.load(f)
@@ -90,6 +99,15 @@ def validate_coverage(
     response: bool = typer.Option(False, "--response", "-r", help="Validate as CoverageLedgerResponse (requires audit_run_id, timestamps)"),
 ):
     """Validate a coverage ledger JSON file against the schema."""
+    # Typer passes boolean flags as strings when not using is_flag=True; normalize
+    if isinstance(strict, str):
+        strict = strict.lower() in ("true", "1", "yes", "on")
+    elif strict is None:
+        strict = True
+    if isinstance(response, str):
+        response = response.lower() in ("true", "1", "yes", "on")
+    elif response is None:
+        response = True
     try:
         with open(file_path, "r") as f:
             data = json.load(f)
@@ -149,6 +167,9 @@ def display_coverage(
     response: bool = typer.Option(False, "--response", "-r", help="Parse as CoverageLedgerResponse (requires audit_run_id, timestamps)"),
 ):
     """Display coverage ledger in a formatted table."""
+    # Typer passes boolean flags as strings when not using is_flag=True; normalize
+    if isinstance(response, str):
+        response = response.lower() in ("true", "1", "yes", "on")
     try:
         with open(file_path, "r") as f:
             data = json.load(f)
