@@ -182,10 +182,10 @@ async def get_coverage_ledger(audit_id: int, db: AsyncSession = Depends(get_db))
     if not audit:
         raise HTTPException(status_code=404, detail="Audit run not found")
     
-    ledger = await db.execute(
+    result = await db.execute(
         select(CoverageLedger).where(CoverageLedger.audit_run_id == audit_id)
     )
-    ledger = ledger.scalar_one_or_none()
+    ledger = result.scalar_one_or_none()
     if not ledger:
         # Create empty ledger
         ledger = CoverageLedger(audit_run_id=audit_id)

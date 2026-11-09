@@ -1,5 +1,19 @@
 # Changelog
 
+## 1.4.0 — work-in-progress checkpoint
+
+Partial code published for continued development. Known issues: STATUS.md.
+
+## 1.3.1 — 2026-11-09
+
+### Fixed
+- Backend mypy type checking errors (6 errors resolved)
+- Added pyproject.toml with mypy configuration for proper type checking
+- Fixed variable reassignment type issue in audits.py (get_coverage_ledger endpoint)
+- Fixed mypy false positives in validate.py with targeted type ignores
+- All backend and frontend tests passing
+- Type checking passes for both backend (mypy) and frontend (TypeScript)
+
 ## 1.3.0 — work-in-progress checkpoint
 
 Partial code published for continued development. Known issues: STATUS.md.

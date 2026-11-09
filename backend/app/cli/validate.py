@@ -81,8 +81,8 @@ def validate_finding(
 
     if errors:
         console.print("[red]Errors:[/red]")
-        for e in errors:
-            console.print(f"  - {e}")
+        for err in errors:  # type: ignore[misc]
+            console.print(f"  - {err}")  # type: ignore[misc]
         raise typer.Exit(1)
 
     if strict and warnings:
@@ -150,8 +150,8 @@ def validate_coverage(
 
     if errors:
         console.print("[red]Errors:[/red]")
-        for e in errors:
-            console.print(f"  - {e}")
+        for err in errors:  # type: ignore[misc]
+            console.print(f"  - {err}")  # type: ignore[misc]
         raise typer.Exit(1)
 
     if strict and warnings:
