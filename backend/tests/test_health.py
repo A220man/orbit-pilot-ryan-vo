@@ -165,3 +165,18 @@ def test_get_audit_logs(client: TestClient):
     assert isinstance(data, list)
     assert len(data) >= 1  # At least the creation log
     assert data[0]["action"] == "created"
+def test_run_audit(client: TestClient):
+    # Create an audit run
+    create_resp = client.post("/api/v1/audits", json={
+        "name": "Test Audit Run",
+        "target_path": "/path/to/target",
+        "profile": "standard"
+    })
+    audit_id = create_resp.json()["id"]
+
+    # Start the audit run
+    response = client.post(f"/api/v1/audits/{audit_id}/run")
+    assert response.status_code == 200
+    data = response.json()
+    assert data["status"] == "running"
+    assert data["started_at"] is not None
