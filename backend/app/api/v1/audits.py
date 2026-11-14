@@ -206,3 +206,19 @@ async def get_audit_logs(audit_id: int, limit: int = 200, db: AsyncSession = Dep
     query = select(AuditLog).where(AuditLog.audit_run_id == audit_id).order_by(AuditLog.timestamp.desc()).limit(limit)
     result = await db.execute(query)
     return result.scalars().all()
+# Test appended
+
+@router.post("/audits/{audit_id}/run")
+async def run_audit(audit_id: int, db: AsyncSession = Depends(get_db)):
+    audit = await db.get(AuditRun, audit_id)
+    if not audit:
+        raise HTTPException(status_code=404, detail="Audit run not found")
+    
+    # Transition to RUNNING
+    audit.status = AuditStatus.RUNNING
+    if not audit.started_at:
+        audit.started_at = datetime.now(timezone.utc)
+    
+    await db.commit()
+    await db.refresh(audit)
+    return audit
