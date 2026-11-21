@@ -214,6 +214,12 @@ async def run_audit(audit_id: int, db: AsyncSession = Depends(get_db)):
     if not audit:
         raise HTTPException(status_code=404, detail="Audit run not found")
     
+    if audit.status == AuditStatus.RUNNING:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Audit run is already in '{AuditStatus.RUNNING}' status. Use PATCH to update or stop the current run.",
+        )
+    
     # Transition to RUNNING
     audit.status = AuditStatus.RUNNING
     if not audit.started_at:
