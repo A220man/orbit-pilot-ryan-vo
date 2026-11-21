@@ -180,3 +180,25 @@ def test_run_audit(client: TestClient):
     data = response.json()
     assert data["status"] == "running"
     assert data["started_at"] is not None
+
+
+def test_run_audit_already_running(client: TestClient):
+    # Create an audit run and start it
+    create_resp = client.post("/api/v1/audits", json={
+        "name": "Test Audit Already Running",
+        "target_path": "/path/to/target",
+        "profile": "standard"
+    })
+    audit_id = create_resp.json()["id"]
+
+    # Start the audit run first time
+    response = client.post(f"/api/v1/audits/{audit_id}/run")
+    assert response.status_code == 200
+    data = response.json()
+    assert data["status"] == "running"
+
+    # Try to start it again - should return 400
+    response = client.post(f"/api/v1/audits/{audit_id}/run")
+    assert response.status_code == 400
+    data = response.json()
+    assert "already in" in data["detail"]
