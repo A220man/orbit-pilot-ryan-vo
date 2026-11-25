@@ -9,7 +9,7 @@ from app.models import AuditRun, Finding, CoverageLedger, AuditLog, AuditStatus,
 from app.schemas import (
     AuditRunCreate, AuditRunUpdate, AuditRunResponse,
     FindingCreate, FindingUpdate, FindingResponse,
-    CoverageLedgerResponse, AuditLogEntry, HealthResponse,
+    CoverageLedgerResponse, AuditLogEntry, HealthResponse, PhaseProgress,
 )
 
 router = APIRouter()
@@ -228,3 +228,42 @@ async def run_audit(audit_id: int, db: AsyncSession = Depends(get_db)):
     await db.commit()
     await db.refresh(audit)
     return audit
+
+# Multi-phase progress
+_PHASE_ORDER = ["reconnaissance", "hunting", "validation", "reporting"]
+
+
+@router.get("/audits/{audit_id}/phases", response_model=List[PhaseProgress])
+async def get_phase_progress(audit_id: int, db: AsyncSession = Depends(get_db)):
+    audit = await db.get(AuditRun, audit_id)
+    if not audit:
+        raise HTTPException(status_code=404, detail="Audit run not found")
+
+    result = await db.execute(
+        select(AuditLog)
+        .where(AuditLog.audit_run_id == audit_id)
+        .order_by(AuditLog.timestamp.asc())
+    )
+    logs = result.scalars().all()
+
+    phases: List[PhaseProgress] = []
+    for phase in _PHASE_ORDER:
+        phase_logs = [log for log in logs if log.phase == phase]
+        completed_logs = [log for log in phase_logs if log.action in ("completed", "phase_completed")]
+        started_logs = [log for log in phase_logs if log.action in ("started", "phase_started")]
+        if completed_logs:
+            pstatus = "completed"
+        elif started_logs:
+            pstatus = "in_progress"
+        else:
+            pstatus = "pending"
+        started_at = started_logs[0].timestamp if started_logs else None
+        completed_at = completed_logs[-1].timestamp if completed_logs else None
+        phases.append(PhaseProgress(
+            phase=phase,
+            status=pstatus,
+            started_at=started_at,
+            completed_at=completed_at,
+            log_count=len(phase_logs),
+        ))
+    return phases

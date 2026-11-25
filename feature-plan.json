@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "current_feature": "continue-implementation",
+  "current_feature": "add-audit-run-endpoint",
   "features": [
     {
       "id": "continue-implementation",
@@ -23,7 +23,7 @@
     {
       "id": "add-audit-run-endpoint",
       "title": "POST /api/v1/audits/{id}/run endpoint",
-      "status": "planned",
+      "status": "done",
       "acceptance": [
         "Start audit run transitions status to \"running\"",
         "Records started_at timestamp",
