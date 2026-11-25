@@ -4,7 +4,7 @@ Each round completes one feature or repair. Future items are planned, not implem
 
 ## Current round
 
-continue-implementation
+add-audit-run-endpoint
 
 ## Roadmap
 
@@ -21,7 +21,7 @@ Tests: `backend/tests/test_health.py`, `backend/tests/test_cli_validate.py`, `fr
 
 ### add-audit-run-endpoint — POST /api/v1/audits/{id}/run endpoint
 
-Status: planned
+Status: done
 
 Acceptance:
 - Start audit run transitions status to "running"

@@ -156,3 +156,10 @@ class HealthResponse(BaseModel):
     status: str
     version: str
     environment: str
+
+class PhaseProgress(BaseModel):
+    phase: str
+    status: str  # pending, in_progress, completed
+    started_at: Optional[datetime] = None
+    completed_at: Optional[datetime] = None
+    log_count: int = 0

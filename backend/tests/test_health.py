@@ -202,3 +202,47 @@ def test_run_audit_already_running(client: TestClient):
     assert response.status_code == 400
     data = response.json()
     assert "already in" in data["detail"]
+
+def test_get_phase_progress(client: TestClient):
+    create_resp = client.post("/api/v1/audits", json={
+        "name": "Phase Audit",
+        "target_path": "/path/to/phases",
+        "profile": "standard",
+    })
+    audit_id = create_resp.json()["id"]
+
+    # No phase logs yet -> all pending
+    response = client.get(f"/api/v1/audits/{audit_id}/phases")
+    assert response.status_code == 200
+    data = response.json()
+    assert [p["phase"] for p in data] == ["reconnaissance", "hunting", "validation", "reporting"]
+    assert all(p["status"] == "pending" for p in data)
+
+    # Inject phase logs directly via the test DB session
+    import asyncio
+    from tests.conftest import TestAsyncSessionLocal
+    from app.models import AuditLog
+
+    async def seed():
+        async with TestAsyncSessionLocal() as session:
+            session.add(AuditLog(audit_run_id=audit_id, phase="reconnaissance", action="started"))
+            session.add(AuditLog(audit_run_id=audit_id, phase="reconnaissance", action="completed"))
+            session.add(AuditLog(audit_run_id=audit_id, phase="hunting", action="started"))
+            await session.commit()
+
+    asyncio.run(seed())
+
+    response = client.get(f"/api/v1/audits/{audit_id}/phases")
+    assert response.status_code == 200
+    data = {p["phase"]: p for p in response.json()}
+    assert data["reconnaissance"]["status"] == "completed"
+    assert data["reconnaissance"]["started_at"] is not None
+    assert data["reconnaissance"]["completed_at"] is not None
+    assert data["hunting"]["status"] == "in_progress"
+    assert data["validation"]["status"] == "pending"
+    assert data["reporting"]["status"] == "pending"
+
+
+def test_get_phase_progress_not_found(client: TestClient):
+    response = client.get("/api/v1/audits/9999/phases")
+    assert response.status_code == 404
